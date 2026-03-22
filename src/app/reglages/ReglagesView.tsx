@@ -590,7 +590,7 @@ function ParametresTab({ isAdmin }: { isAdmin: boolean }) {
   };
 
   const SETTING_FIELDS = [
-    { key: "company_name", label: "Nom de la société", placeholder: "Energie Solaire France" },
+    { key: "company_name", label: "Nom de la société", placeholder: "Ma Société" },
     { key: "company_email", label: "Email société", placeholder: "contact@energiesolairefrance.fr" },
     { key: "company_phone", label: "Téléphone société", placeholder: "01 23 45 67 89" },
     { key: "company_address", label: "Adresse société", placeholder: "123 rue..." },
