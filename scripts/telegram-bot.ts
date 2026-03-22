@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * 🤖 BOT TELEGRAM CRM BH COMPANY
+ * 🤖 BOT TELEGRAM CRM
  * Avec toutes les commandes et fonctionnalités
  */
 
@@ -34,7 +34,7 @@ bot.onText(/\/start/, (msg) => {
     return;
   }
   const text = `
-👋 <b>Bienvenue sur le CRM BH Company Bot !</b>
+👋 <b>Bienvenue sur le CRM Bot !</b>
 
 🎯 Je suis ton assistant intelligent pour gérer ton CRM.
 
