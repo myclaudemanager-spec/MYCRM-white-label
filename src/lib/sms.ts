@@ -9,12 +9,16 @@
  * SMS_ACCOUNT_SID="AC..." # Twilio Account SID
  * SMS_AUTH_TOKEN="..." # Twilio Auth Token
  * SMS_FROM_NUMBER="+33612345678" # Numéro expéditeur
+ * SMS_COMPANY_NAME="Nom de la société" # Nom utilisé dans les messages
+ * SMS_REPLY_PHONE="0600000000" # Numéro de téléphone pour les rappels
  */
 
 const SMS_PROVIDER = process.env.SMS_PROVIDER || "disabled";
 const SMS_ACCOUNT_SID = process.env.SMS_ACCOUNT_SID;
 const SMS_AUTH_TOKEN = process.env.SMS_AUTH_TOKEN;
 const SMS_FROM = process.env.SMS_FROM_NUMBER || "+33612345678";
+const SMS_COMPANY_NAME = process.env.SMS_COMPANY_NAME || "Notre entreprise";
+const SMS_REPLY_PHONE = process.env.SMS_REPLY_PHONE || "0600000000";
 
 interface SMSResult {
   success: boolean;
@@ -121,7 +125,7 @@ export async function sendRDVConfirmation(client: {
   const dateRDV = client.rdvDate || "[date à confirmer]";
   const heureRDV = client.rdvTime || "[heure à confirmer]";
 
-  const message = `✅ Bonjour ${prenom}, votre RDV avec Energie Solaire France est confirmé le ${dateRDV} à ${heureRDV}. Nous vous rappellerons 24h avant. En cas d'imprévu, appelez-nous au 06XXXXXXXX.`;
+  const message = `✅ Bonjour ${prenom}, votre RDV avec ${SMS_COMPANY_NAME} est confirmé le ${dateRDV} à ${heureRDV}. Nous vous rappellerons 24h avant. En cas d'imprévu, appelez-nous au ${SMS_REPLY_PHONE}.`;
 
   return sendSMS(phone, message);
 }
@@ -145,7 +149,7 @@ export async function sendRDV24HReminder(client: {
   const dateRDV = client.rdvDate || "[date]";
   const heureRDV = client.rdvTime || "[heure]";
 
-  const message = `⏰ Rappel : RDV demain ${dateRDV} à ${heureRDV} avec Energie Solaire France pour votre projet panneaux solaires. Merci de confirmer votre présence en répondant OUI. Besoin de reporter ? Appelez 06XXXXXXXX`;
+  const message = `⏰ Rappel : RDV demain ${dateRDV} à ${heureRDV} avec ${SMS_COMPANY_NAME}. Merci de confirmer votre présence en répondant OUI. Besoin de reporter ? Appelez ${SMS_REPLY_PHONE}`;
 
   return sendSMS(phone, message);
 }
@@ -192,9 +196,9 @@ export async function sendRDVCancelled(
 
   let message = "";
   if (reason === "cancel") {
-    message = `❌ Bonjour ${prenom}, votre RDV avec Energie Solaire France a été annulé. Pour reprendre contact, appelez-nous au 06XXXXXXXX.`;
+    message = `❌ Bonjour ${prenom}, votre RDV avec ${SMS_COMPANY_NAME} a été annulé. Pour reprendre contact, appelez-nous au ${SMS_REPLY_PHONE}.`;
   } else {
-    message = `📅 Bonjour ${prenom}, votre RDV avec Energie Solaire France doit être reporté. Nous vous recontactons rapidement pour fixer une nouvelle date. Merci de votre compréhension.`;
+    message = `📅 Bonjour ${prenom}, votre RDV avec ${SMS_COMPANY_NAME} doit être reporté. Nous vous recontactons rapidement pour fixer une nouvelle date. Merci de votre compréhension.`;
   }
 
   return sendSMS(phone, message);

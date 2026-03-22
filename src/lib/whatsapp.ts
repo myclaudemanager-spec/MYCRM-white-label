@@ -69,7 +69,8 @@ export function generateWhatsAppLink(clientPhone: string, message: string): stri
  * Génère le message de bienvenue WhatsApp pour un nouveau lead
  */
 export function getWelcomeMessage(firstName: string): string {
-  return `Bonjour ${firstName}, suite à votre demande concernant l'énergie solaire, notre conseiller va vous contacter prochainement.`;
+  const product = process.env.LANDING_PRODUCT || "nos services";
+  return `Bonjour ${firstName}, suite à votre demande concernant ${product}, notre conseiller va vous contacter prochainement.`;
 }
 
 /**

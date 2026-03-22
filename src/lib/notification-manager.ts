@@ -177,7 +177,7 @@ export class NotificationManager {
       return {
         platform: '🌐 Landing Page',
         platformShort: 'LANDING PAGE',
-        campaignName: metadata.source || 'devis-solaire-paca.fr',
+        campaignName: metadata.source || process.env.LANDING_DOMAIN || 'votre landing page',
       };
     }
 
@@ -233,7 +233,7 @@ export class NotificationManager {
     let whatsappLink = '';
     if (mobile) {
       const phoneClean = mobile.replace(/\s/g, '').replace(/^0/, '33');
-      const welcomeMsg = encodeURIComponent(`Bonjour ${decrypted.firstName}, suite à votre demande concernant l'énergie solaire, notre conseiller va vous contacter prochainement.`);
+      const welcomeMsg = encodeURIComponent(`Bonjour ${decrypted.firstName}, suite à votre demande concernant ${process.env.LANDING_PRODUCT || 'nos services'}, notre conseiller va vous contacter prochainement.`);
       whatsappLink = `\n💬 <a href="https://wa.me/${phoneClean}?text=${welcomeMsg}">Contacter sur WhatsApp</a>`;
     }
 
@@ -268,7 +268,7 @@ ${statusRdv ? `└ Statut RDV: ${this.escapeHtml(statusRdv)}` : '└ Aucun RDV'}
 📘 Revenu via: ${this.escapeHtml(campaign)}
 ⚠️ <b>Ce contact a soumis un nouveau formulaire — il est à recontacter !</b>
 
-🔗 <a href="https://mycrm.solar/clients?openClient=${decrypted.id}">Ouvrir la fiche</a>${whatsappLink}
+🔗 <a href="${process.env.CRM_BASE_URL || 'https://mycrm.solar'}/clients?openClient=${decrypted.id}">Ouvrir la fiche</a>${whatsappLink}
     `.trim();
   }
 
@@ -313,7 +313,7 @@ ${statusRdv ? `└ Statut RDV: ${this.escapeHtml(statusRdv)}` : '└ Aucun RDV'}
     if (mobile) {
       const phoneClean = mobile.replace(/\s/g, '').replace(/^0/, '33');
       const firstName = this.escapeHtml(decryptedClient.firstName);
-      const welcomeMsg = encodeURIComponent(`Bonjour ${firstName}, suite à votre demande concernant l'énergie solaire, notre conseiller va vous contacter prochainement.`);
+      const welcomeMsg = encodeURIComponent(`Bonjour ${firstName}, suite à votre demande concernant ${process.env.LANDING_PRODUCT || 'nos services'}, notre conseiller va vous contacter prochain.`);
       whatsappLink = `\n💬 <a href="https://wa.me/${phoneClean}?text=${welcomeMsg}">Contacter sur WhatsApp</a>`;
     }
 
@@ -332,7 +332,7 @@ ${campaignInfo.platform} Plateforme
 🎯 Campagne: ${this.escapeHtml(campaignInfo.campaignName)}${campaignInfo.formName ? `\n📝 Formulaire: ${this.escapeHtml(campaignInfo.formName)}` : ''}
 ⏰ Créé: ${timestamp}
 
-🔗 <a href="https://mycrm.solar/clients?openClient=${decryptedClient.id}">Voir la fiche</a>${whatsappLink}
+🔗 <a href="${process.env.CRM_BASE_URL || 'https://mycrm.solar'}/clients?openClient=${decryptedClient.id}">Voir la fiche</a>${whatsappLink}
     `.trim();
 
     return message;
