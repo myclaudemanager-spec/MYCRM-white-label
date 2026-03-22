@@ -54,7 +54,7 @@ export default function LoginPage() {
             <span className="text-2xl font-bold text-white">BH</span>
           </div>
           <h1 className="text-3xl font-bold text-white">MyCRM</h1>
-          <p className="text-blue-200 mt-1">Energie Solaire France - Espace de connexion</p>
+          <p className="text-blue-200 mt-1">{process.env.NEXT_PUBLIC_BUSINESS_NAME || "CRM"} - Espace de connexion</p>
         </div>
 
         {/* Login Form */}
@@ -152,7 +152,7 @@ export default function LoginPage() {
         </form>
 
         <p className="text-center text-blue-200/50 text-xs mt-6">
-          MyCRM v1.0 - Energie Solaire France &copy; 2026
+          MyCRM v1.0 - {process.env.NEXT_PUBLIC_BUSINESS_NAME || "CRM"} &copy; 2026
         </p>
       </div>
     </div>
