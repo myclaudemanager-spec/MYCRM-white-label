@@ -46,6 +46,6 @@ export default async function LandingPage({ params }: PageProps) {
 }
 
 export const metadata = {
-  title: "Réduisez votre facture d'électricité - Energie Solaire France",
+  title: `Réduisez votre facture d'électricité - ${process.env.NEXT_PUBLIC_BUSINESS_NAME || "Solaire"}`,
   description: "Obtenez votre étude gratuite de panneaux photovoltaïques personnalisée",
 };
