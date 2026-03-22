@@ -314,10 +314,10 @@ export async function generateInvoicePDF(
  * Données entreprise par défaut
  */
 export const DEFAULT_COMPANY_INFO = {
-  name: 'Energie Solaire France',
-  address: 'Dubai, UAE',
-  phone: '+971 XX XXX XXXX',
-  email: 'contact@energiesolairefrance.fr',
-  siret: undefined,
-  tva: undefined,
+  name: process.env.NEXT_PUBLIC_BUSINESS_NAME || 'Ma Société',
+  address: process.env.BUSINESS_ADDRESS || '',
+  phone: process.env.BUSINESS_PHONE || '',
+  email: process.env.BUSINESS_EMAIL || '',
+  siret: process.env.BUSINESS_SIRET || undefined,
+  tva: process.env.BUSINESS_TVA || undefined,
 };
