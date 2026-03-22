@@ -1,11 +1,11 @@
 /**
- * 🌐 API LANDING PAGE EXTERNE : devis-solaire-paca.fr
+ * 🌐 API LANDING PAGE EXTERNE (CORS activé)
  *
- * Reçoit les leads depuis la landing page externe (CORS activé).
+ * Reçoit les leads depuis la landing page externe.
  * REFACTORÉ pour utiliser LeadIngestionService.
  *
  * Spécificités :
- * - Validation stricte PACA (13, 30, 83, 84)
+ * - Validation zones configurées (ALLOWED_DEPARTMENTS)
  * - CORS headers pour domaine externe
  * - Mise à jour lead si déjà existant
  */
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
       const updatedClient = await prisma.client.update({
         where: { id: existingClient.id },
         data: {
-          campaign: source || "devis-solaire-paca.fr",
+          campaign: source || process.env.LANDING_DOMAIN?.replace(/^https?:\/\//, "") || "landing-page",
           statusCall: "NOUVEAU LEAD",
         },
       });
@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
       isOwner: proprietaire, // ✅ Ajout filtrage propriétaire/locataire
       // city sera enrichi automatiquement par le service
       sourceMetadata: {
-        source: source || "devis-solaire-paca.fr",
+        source: source || process.env.LANDING_DOMAIN?.replace(/^https?:\/\//, "") || "landing-page",
         departement,
         originalNom: nom,
         proprietaire: proprietaire || "non renseigné",
@@ -230,7 +230,7 @@ export async function GET(request: NextRequest) {
 
     const whereClause: Prisma.ClientWhereInput = {
       OR: [
-        { campaign: { contains: "devis-solaire-paca" } },
+        { campaign: { contains: process.env.LANDING_DOMAIN?.replace(/^https?:\/\//, "") || "landing" } },
         { sourceType: LeadSource.LANDING_PAGE },
       ]
     };
