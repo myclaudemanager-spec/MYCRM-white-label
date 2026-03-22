@@ -13,6 +13,33 @@ interface Props {
   campaignName: string;
 }
 
+// Configuration data-driven depuis env vars
+const LANDING_CONFIG = {
+  businessName: process.env.NEXT_PUBLIC_BUSINESS_NAME || "Ma Société",
+  productName: process.env.LANDING_PRODUCT || "nos services",
+  heroTitle: "Divisez vos coûts",
+  heroSubtitle: `Économisez jusqu'à <strong class="text-green-400">1200€/an</strong> avec ${process.env.LANDING_PRODUCT || "nos services"}`,
+  counterValue: parseInt(process.env.NEXT_PUBLIC_LANDING_COUNTER || "847"),
+  stats: [
+    { icon: Euro, value: "1200€", label: "Économies/an", color: "text-green-400" },
+    { icon: Sun, value: "25 ans", label: "Durée de vie", color: "text-yellow-400" },
+    { icon: Shield, value: "100%", label: "Garanti", color: "text-blue-400" },
+    { icon: TrendingDown, value: "-50%", label: "Facture", color: "text-purple-400" },
+  ],
+  nextSteps: [
+    `Analyse détaillée de votre projet`,
+    `Calcul précis de vos économies`,
+    `Simulation des aides disponibles`,
+    `Proposition personnalisée`
+  ],
+  trustBadges: [
+    { text: "Installation rapide", icon: CheckCircle },
+    { text: "Garantie longue durée", icon: CheckCircle },
+    { text: "Financement accessible", icon: CheckCircle },
+  ],
+  offerBadge: `🔥 Offre limitée : Étude gratuite + Aides jusqu'à 40%`,
+};
+
 export default function LandingContent({ token }: Props) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -36,7 +63,7 @@ export default function LandingContent({ token }: Props) {
   // Compteur animé
   const [counter, setCounter] = useState(0);
   useEffect(() => {
-    const target = 847;
+    const target = LANDING_CONFIG.counterValue;
     const duration = 2000;
     const increment = target / (duration / 16);
     let current = 0;
@@ -138,18 +165,13 @@ export default function LandingContent({ token }: Props) {
             Demande enregistrée avec succès ! 🎉
           </h1>
           <p className="text-xl text-white/90 mb-8">
-            Un de nos experts en énergie solaire vous contactera dans les <strong className="text-green-400">24 heures</strong> pour votre étude personnalisée gratuite.
+            Un de nos experts vous contactera dans les <strong className="text-green-400">24 heures</strong> pour votre étude personnalisée gratuite.
           </p>
 
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
             <h3 className="text-lg font-bold text-white mb-4">📋 Vos prochaines étapes</h3>
             <div className="space-y-4 text-left">
-              {[
-                "Analyse détaillée de votre toiture et ensoleillement",
-                "Calcul précis de vos économies sur 25 ans",
-                "Simulation des aides d'État disponibles",
-                "Proposition d'installation personnalisée"
-              ].map((step, i) => (
+              {LANDING_CONFIG.nextSteps.map((step, i) => (
                 <div key={i} className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
                     <Check size={16} className="text-green-400" />
@@ -190,11 +212,11 @@ export default function LandingContent({ token }: Props) {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
               <Award size={16} className="text-yellow-400" />
-              <span className="font-semibold">Certifié RGE QualiPV</span>
+              <span className="font-semibold">Certifié Qualité</span>
             </div>
             <div className="hidden md:flex items-center gap-2">
               <Users size={16} className="text-green-400" />
-              <span><strong className="text-green-400">{counter}+</strong> installations</span>
+              <span><strong className="text-green-400">{counter}+</strong> clients satisfaits</span>
             </div>
             <div className="hidden md:flex items-center gap-2">
               <Star size={16} className="text-yellow-400" />
@@ -213,34 +235,27 @@ export default function LandingContent({ token }: Props) {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <div className="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-sm font-bold px-4 py-2 rounded-full mb-6 animate-[bounce_2s_ease-in-out_infinite]">
-              🔥 Offre limitée : Étude gratuite + Aides jusqu'à 40%
+              {LANDING_CONFIG.offerBadge}
             </div>
 
             <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
-              Divisez votre facture
+              {LANDING_CONFIG.heroTitle}
               <br />
               <span className="bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                d'électricité par 2
+                avec {LANDING_CONFIG.businessName}
               </span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-white/80 mb-8 max-w-3xl mx-auto">
-              Produisez votre propre énergie verte et économisez jusqu'à <strong className="text-green-400">1200€/an</strong> avec les panneaux solaires
+            <p className="text-xl md:text-2xl text-white/80 mb-8 max-w-3xl mx-auto" dangerouslySetInnerHTML={{ __html: LANDING_CONFIG.heroSubtitle }}>
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-5 py-2 border border-white/20">
-                <CheckCircle size={20} className="text-green-400" />
-                <span className="text-white font-semibold">Installation en 48h</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-5 py-2 border border-white/20">
-                <CheckCircle size={20} className="text-green-400" />
-                <span className="text-white font-semibold">Garantie 25 ans</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-5 py-2 border border-white/20">
-                <CheckCircle size={20} className="text-green-400" />
-                <span className="text-white font-semibold">Financement 0€</span>
-              </div>
+              {LANDING_CONFIG.trustBadges.map((badge, i) => (
+                <div key={i} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-5 py-2 border border-white/20">
+                  <badge.icon size={20} className="text-green-400" />
+                  <span className="text-white font-semibold">{badge.text}</span>
+                </div>
+              ))}
             </div>
 
             {/* Video placeholder */}
@@ -260,12 +275,7 @@ export default function LandingContent({ token }: Props) {
 
           {/* Stats impressionnants */}
           <div className="grid md:grid-cols-4 gap-6 mb-16">
-            {[
-              { icon: Euro, value: "1200€", label: "Économies/an", color: "text-green-400" },
-              { icon: Sun, value: "25 ans", label: "Durée de vie", color: "text-yellow-400" },
-              { icon: Shield, value: "100%", label: "Garanti", color: "text-blue-400" },
-              { icon: TrendingDown, value: "-50%", label: "Facture", color: "text-purple-400" },
-            ].map((stat, i) => (
+            {LANDING_CONFIG.stats.map((stat, i) => (
               <div key={i} className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 text-center hover:bg-white/20 transition-all hover:scale-105">
                 <stat.icon size={40} className={`${stat.color} mx-auto mb-4`} />
                 <p className={`text-4xl font-black ${stat.color} mb-2`}>{stat.value}</p>
