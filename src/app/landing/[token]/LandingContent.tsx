@@ -686,7 +686,7 @@ export default function LandingContent({ token }: Props) {
             </div>
 
             <p className="text-white/40 text-xs mt-8">
-              © 2026 Energie Solaire France · Tous droits réservés
+              © 2026 {process.env.NEXT_PUBLIC_BUSINESS_NAME || "Business"} · Tous droits réservés
             </p>
           </div>
         </div>
