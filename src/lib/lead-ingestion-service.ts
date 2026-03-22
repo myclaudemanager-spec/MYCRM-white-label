@@ -673,7 +673,7 @@ export class LeadIngestionService {
   private getCampaignName(source: LeadSource): string {
     const names: Record<LeadSource, string> = {
       [LeadSource.FACEBOOK_LEAD_ADS]: 'FACEBOOK_LEAD_ADS',
-      [LeadSource.LANDING_PAGE]: 'devis-solaire-paca.fr',
+      [LeadSource.LANDING_PAGE]: process.env.LANDING_DOMAIN?.replace(/^https?:\/\//, "") || "landing-page",
       [LeadSource.EMAIL_CAMPAIGN]: 'EMAIL_CAMPAIGN',
       [LeadSource.MANUAL_IMPORT]: 'IMPORT_MANUEL',
       [LeadSource.WEBSITE_FORM]: 'SITE_WEB',
