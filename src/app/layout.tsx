@@ -11,8 +11,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "MyCRM - Energie Solaire France",
-  description: "CRM de gestion commerciale - Energie Solaire France",
+  title: `MyCRM - ${process.env.NEXT_PUBLIC_BUSINESS_NAME || "CRM"}`,
+  description: `CRM de gestion commerciale - ${process.env.NEXT_PUBLIC_BUSINESS_NAME || "CRM"}`,
 };
 
 export default function RootLayout({
