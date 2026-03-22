@@ -1,0 +1,60 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+
+# local env files
+.env*.local
+.env
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# prisma
+prisma/dev.db
+prisma/dev.db-journal
+prisma/prisma/
+
+# backups
+/backups/
+*.db.gz
+backup.log
+/reports/
+logs/startup-checkups/
+/docs/CREDENTIALS.md
+# Backups de tokens
+.env.backup-*
+
+# Audit Facebook
+/audit-reports/
+logs/audit-facebook-*.log
+
+# Logs synchronisation dépenses publicitaires
+logs/ad-spend-sync/*.log
+logs/ad-spend-sync/*.json
+
+# Logs auto-heal et smart-backup
+logs/auto-heal.log
+logs/auto-heal-alerts.log
+logs/smart-backup.log
+
+# Fichiers générés automatiquement
+.client-count.txt

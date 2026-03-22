@@ -1,0 +1,456 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   Int            @id @default(autoincrement())
+  login                String         @unique
+  name                 String
+  email                String         @unique
+  password             String
+  role                 String         @default("commercial")
+  team                 String?
+  active               Boolean        @default(true)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  permissions          String         @default("{}")
+  restrictions         String         @default("{}")
+  actionsPerformed     Action[]
+  userPoints          UserPoints?
+  callLogs             CallLog[]
+  clientsAsTelepos     Client[]       @relation("Telepos")
+  clientsAsCommercial2 Client[]       @relation("Commercial2")
+  clientsAsCommercial1 Client[]       @relation("Commercial1")
+  notifications        Notification[]
+}
+
+model Client {
+  id                 Int            @id @default(autoincrement())
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  civilite           String?
+  firstName          String?
+  lastName           String?
+  address            String?
+  zipCode            String?
+  city               String?
+  mobile             String?
+  phone1             String?
+  phone2             String?
+  email              String?
+  observation        String?
+  statusCall         String?
+  statusRDV          String?
+  commercial1Id      Int?
+  commercial2Id      Int?
+  teleposId          Int?
+  team               String?
+  campaign           String?
+  rdvDate            String?  // Changed from DateTime to String for SQLite compatibility
+  rdvTime            String?
+  vtDate             DateTime?
+  vtTime             String?
+  rappelDate         DateTime?
+  rappelTime         String?
+  rdvCreatedDate     DateTime?
+  confirmedWith      String?
+  rapportCommerciale String?
+  infosRDV           String?
+  typeRDV            String?
+  rdvDuration        String?
+  ownerSince         String?
+  propertyType       String?
+  surface            String?
+  counter            String?
+  heatingSystem      String?
+  pool               Boolean        @default(false)
+  electricCar        Boolean        @default(false)
+  electricBill       String?
+  roofOrientation    String?
+  roofSpace          String?
+  zoneABF            Boolean        @default(false)
+  familyStatus       String?
+  ageMr              String?
+  ageMme             String?
+  situationMr        String?
+  situationMme       String?
+  children           String?
+  householdIncome    String?
+  currentCredit      Int            @default(0)
+  financing          String?
+  isOwner            String?
+  societe            String?
+  bank               String?
+  power              String?
+  totalAmount        String?
+  cessionPrice       String?
+  oversell           String?
+  cqYoran            String?
+  installDate        DateTime?
+  invoiceHT          Float          @default(0)
+  invoiceTTC         Float          @default(0)
+  commissionHT       Float          @default(0)
+  commissionTTC      Float          @default(0)
+  deductionType      String?
+  annexFees          String?
+  commissionTelepos  Float          @default(0)
+  commissionFinal    String?
+  marginBH           String?
+  autoConsumption    String?
+  tvaRecovery        String?
+  primeRenov         String?
+  cee                String?
+  callHistory        String?
+  statusHistory      String?
+  refClient          String?
+  missedCalls        Int            @default(0)
+  products           String?        // JSON des produits vendus (panneaux, onduleurs, etc.)
+  productCount       Int            @default(0)  // Nombre de produits
+  oldId              String?        // ID du client dans l'ancien système
+  pixelLeadSent      Boolean        @default(false)
+  pixelRDVSent       Boolean        @default(false)
+  pixelSignatureSent Boolean        @default(false)
+  pixelInstallSent   Boolean        @default(false)
+  pixelPaymentSent   Boolean        @default(false)
+  pixelQualifiedSent Boolean        @default(false)
+  // Champs de qualification express
+  pixelQualifiedLeadSent Boolean   @default(false)
+  pixelDisqualifiedSent  Boolean   @default(false)
+  qualifiedAt            DateTime?
+  disqualifiedAt         DateTime?
+  disqualificationReason String?
+  qualificationTime      Int?      // millisecondes
+  // Champs d'attribution Facebook Marketing API
+  fbLeadId           String?        @unique  // ID unique du lead Facebook
+  fbCampaignId       String?                 // ID campagne source
+  fbCampaignName     String?                 // Nom campagne
+  fbAdSetId          String?                 // ID ad set
+  fbAdSetName        String?                 // Nom ad set
+  fbAdId             String?                 // ID publicité
+  fbAdName           String?                 // Nom publicité
+  fbFormId           String?                 // ID formulaire Lead Ads
+  fbFormName         String?                 // Nom formulaire Lead Ads
+  fbLeadCreatedTime  DateTime?               // Quand lead créé sur Facebook
+  fbSyncedAt         DateTime?               // Quand synchronisé dans CRM
+  // Champs archivage soft
+  archived           Boolean        @default(false)
+  archivedAt         DateTime?
+  archiveReason      String?                 // "FAUX_NUM", "PAS_INTERESSE", etc.
+  // Champ commercial (observation du commercial sur le RDV)
+  observationCommercial String?
+  // FB attribution consolidée (JSON: campaignId, campaignName, adSetId, adSetName, adId, adName, formId, formName)
+  fbAttribution      String?
+  // Dernier commentaire d'appel (dénormalisé pour performance liste clients)
+  lastCommentText    String?
+  lastCommentAt      DateTime?
+  // Scoring automatique (0-200 pts)
+  leadScore          Int?                    // Score total calculé
+  leadPriority       String?                 // "TRÈS HAUTE", "HAUTE", "MOYENNE", "BASSE"
+  leadScoreDetails   String?                 // JSON détails scoring
+  leadScoreUpdatedAt DateTime?               // Dernière mise à jour du score
+  // Traçabilité source (ingestion centralisée)
+  sourceType         String?                 // "facebook_lead_ads", "landing_page", "email_campaign", etc.
+  sourceMetadata     String?                 // JSON metadata source (formId, token, etc.)
+  ingestedAt         DateTime?               // Quand inséré dans système via LeadIngestionService
+  validatedAt        DateTime?               // Quand validé par LeadValidator
+  validationStatus   String?                 // "valid", "duplicate", "invalid_owner", "invalid_zone", "error"
+  clientNumber       Int?           @unique    // Numéro séquentiel client (1, 2, 3...)
+  // Commentaires immuables (JSON array of ClientComment)
+  clientComments     String?
+  // Stabilisation — protection mutations
+  frozen             Boolean        @default(false)   // Verrouillé = scripts ne peuvent pas modifier
+  frozenAt           DateTime?                        // Quand verrouillé
+  deletedAt          DateTime?                        // Soft delete (null = actif)
+  actions            Action[]
+  callLogs           CallLog[]
+  telepos            User?          @relation("Telepos", fields: [teleposId], references: [id])
+  commercial2        User?          @relation("Commercial2", fields: [commercial2Id], references: [id])
+  commercial1        User?          @relation("Commercial1", fields: [commercial1Id], references: [id])
+  expenses           Expense[]
+  invoices           Invoice[]
+  notifications      Notification[]
+  emailsSent         EmailSent[]
+}
+
+model Action {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  type      String
+  detail    String?
+  oldStatus String?
+  newStatus String?
+  userId    Int?
+  clientId  Int?
+  client    Client?  @relation(fields: [clientId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model Invoice {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  number      String?
+  type        String?
+  content     String?
+  status      String   @default("brouillon")
+  amount      Float    @default(0)
+  bankTransId String?
+  history     String?
+  clientId    Int?
+  client      Client?  @relation(fields: [clientId], references: [id])
+}
+
+model Expense {
+  id            Int       @id @default(autoincrement())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  date          DateTime?
+  supplier      String?
+  status        String    @default("en_attente")
+  bank          String?
+  amount        Float     @default(0)
+  matching      String?
+  observation   String?
+  hasAttachment Boolean   @default(false)
+  clientId      Int?
+  client        Client?   @relation(fields: [clientId], references: [id])
+}
+
+model Template {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String
+  subject   String?
+  content   String
+  autoSend  Boolean  @default(false)
+  triggerOn String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Campaign {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Team {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Status {
+  id       Int     @id @default(autoincrement())
+  type     String
+  name     String
+  color    String  @default("#3b82f6")
+  order    Int     @default(0)
+  options  String?
+  category String?
+}
+
+model RDVType {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  color String @default("#3b82f6")
+}
+
+model CallLog {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  clientId  Int
+  userId    Int
+  result    String
+  comment   String?
+  duration  Int?
+  callTime  String
+  user      User     @relation(fields: [userId], references: [id])
+  client    Client   @relation(fields: [clientId], references: [id])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  userId    Int
+  type      String
+  title     String
+  message   String
+  clientId  Int?
+  read      Boolean  @default(false)
+  client    Client?  @relation(fields: [clientId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Setting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}
+
+model EmailCampaign {
+  id            Int         @id @default(autoincrement())
+  name          String
+  subject       String
+  template      String      // Template pour génération Groq
+  status        String      @default("draft") // draft, active, paused, completed
+  sentCount     Int         @default(0)
+  openedCount   Int         @default(0)
+  clickedCount  Int         @default(0)
+  leadsCount    Int         @default(0)
+  budget        Float       @default(0)
+  active        Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  startedAt     DateTime?
+  completedAt   DateTime?
+  emails        EmailSent[]
+}
+
+model EmailSent {
+  id            Int            @id @default(autoincrement())
+  campaignId    Int
+  email         String
+  token         String         @unique // UUID pour tracking
+  sent          Boolean        @default(false)
+  opened        Boolean        @default(false)
+  clicked       Boolean        @default(false)
+  converted     Boolean        @default(false)
+  bounced       Boolean        @default(false)
+  sentAt        DateTime?
+  openedAt      DateTime?
+  clickedAt     DateTime?
+  convertedAt   DateTime?
+  bouncedAt     DateTime?
+  // Données capturées si converti
+  capturedData  String?        // JSON des données formulaire
+  campaign      EmailCampaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  client        Client?        @relation(fields: [clientId], references: [id])
+  clientId      Int?
+
+  @@index([campaignId])
+  @@index([email])
+}
+
+// Table de logs d'ingestion (traçabilité complète)
+model LeadIngestionLog {
+  id             Int      @id @default(autoincrement())
+  source         String   // "facebook_lead_ads", "landing_page", etc.
+  status         String   // "valid", "duplicate", "invalid_owner", "error"
+  clientId       Int?
+  error          String?
+  processingTime Int      // ms
+  rawData        String   // JSON données brutes
+  createdAt      DateTime @default(now())
+
+  @@index([source])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Table de monitoring santé des sources
+model LeadSourceHealth {
+  id                  Int       @id @default(autoincrement())
+  source              String    @unique
+  lastLeadAt          DateTime?
+  totalLeadsToday     Int       @default(0)
+  totalLeadsYesterday Int       @default(0)
+  totalLeadsWeek      Int       @default(0)
+  errorCount          Int       @default(0)
+  errorRate           Float     @default(0)
+  status              String    @default("unknown") // "healthy", "warning", "dead"
+  updatedAt           DateTime  @updatedAt
+}
+
+// Table des dépenses publicitaires (historique persisté)
+model AdSpend {
+  id                Int       @id @default(autoincrement())
+  createdAt         DateTime  @default(now())
+
+  // Identification
+  platform          String    // 'facebook' | 'google'
+  accountId         String    // FB Ad Account ID ou Google Ads Account ID
+  campaignId        String    // ID de la campagne
+  campaignName      String?   // Nom de la campagne
+
+  // Période
+  date              DateTime  // Date du spend (jour précis)
+  period            String    // 'daily' | 'weekly' | 'monthly'
+
+  // Montants
+  spend             Float     // Montant dépensé (devise native)
+  currency          String    // 'AED' | 'EUR' | 'USD'
+  spendEUR          Float     // Montant converti en EUR
+
+  // KPIs associés
+  impressions       Int       @default(0)
+  clicks            Int       @default(0)
+  leads             Int       @default(0)
+  conversions       Int       @default(0)
+
+  // Coûts calculés
+  cpl               Float?    // Cost Per Lead
+  cpc               Float?    // Cost Per Click
+  cpm               Float?    // Cost Per Mille
+
+  // Métadonnées
+  objective         String?   // Objectif campagne
+  status            String?   // ACTIVE | PAUSED
+  rawData           String?   // JSON data brute de l'API
+
+  // Index pour requêtes rapides
+  @@index([platform, date])
+  @@index([campaignId, date])
+  @@index([date])
+  @@unique([platform, campaignId, date])
+}
+
+// Table des objectifs de campagnes (tracking performance)
+model CampaignObjective {
+  id                Int       @id @default(autoincrement())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Identification
+  platform          String    // 'facebook' | 'google'
+  campaignId        String    // ID campagne
+  campaignName      String
+
+  // Objectif
+  objective         String    // 'OUTCOME_LEADS' | 'OUTCOME_SALES' | 'OUTCOME_TRAFFIC'
+  optimizationGoal  String    // 'LEAD_GENERATION' | 'CONVERSIONS' | 'LINK_CLICKS'
+
+  // Cibles
+  targetDailyBudget Float?    // Budget journalier cible (AED)
+  targetMonthlyBudget Float?  // Budget mensuel cible (AED)
+  targetCPL         Float?    // CPL cible (AED)
+  targetLeadsPerDay Int?      // Nombre leads/jour cible
+  targetLeadsPerMonth Int?    // Nombre leads/mois cible
+
+  // Alertes
+  alertIfBudgetExceeds Float? // Alerte si budget > X%
+  alertIfCPLExceeds   Float?  // Alerte si CPL > X AED
+  alertIfLeadsBelow   Int?    // Alerte si leads < X/jour
+
+  // Status
+  isActive          Boolean   @default(true)
+
+  @@unique([platform, campaignId])
+}
+
+model UserPoints {
+  id         Int       @id @default(autoincrement())
+  userId     Int       @unique
+  points     Int       @default(0)
+  combos     Int       @default(0)
+  callsToday Int       @default(0)
+  lastCallAt DateTime?
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id])
+}
