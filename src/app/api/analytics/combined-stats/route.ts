@@ -86,12 +86,12 @@ export async function GET() {
     const googleLeadsToday = await prisma.client.count({
       where: {
         createdAt: { gte: todayStart, lte: todayEnd },
-        campaign: 'devis-solaire-paca.fr',
+        campaign: process.env.LANDING_DOMAIN?.replace(/^https?:\/\//, "") || "landing-page",
       },
     });
 
     const googleLeadsTotal = await prisma.client.count({
-      where: { campaign: 'devis-solaire-paca.fr' },
+      where: { campaign: process.env.LANDING_DOMAIN?.replace(/^https?:\/\//, "") || "landing-page" },
     });
 
     // Active campaigns
