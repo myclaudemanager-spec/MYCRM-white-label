@@ -48,14 +48,19 @@ export function calculateLeadScore(client: Partial<Client>): LeadScore {
     return { total: 0, details, priority: "BASSE" as const, color: "#dc2626" };
   }
 
-  // 🚨 HORS ZONE (pas 13/30/83/84) = 10 PTS MAX
-  const zonesOK = ["13", "30", "83", "84"];
+  // 🚨 HORS ZONE (si ALLOWED_DEPARTMENTS configuré) = 10 PTS MAX
+  // Par défaut (vide), toutes les zones sont acceptées (white-label générique)
+  const allowedDepts = (process.env.ALLOWED_DEPARTMENTS || "")
+    .split(",")
+    .map(d => d.trim())
+    .filter(d => d);
   const zipCode = client.zipCode || "";
-  const isZoneOK = zonesOK.some(z => zipCode.startsWith(z));
+  const isRestricted = allowedDepts.length > 0;
+  const isZoneOK = !isRestricted || allowedDepts.some(z => zipCode.startsWith(z));
 
-  if (!isZoneOK && zipCode) {
+  if (isRestricted && !isZoneOK && zipCode) {
     return {
-      total: Math.min(rawTotal, 10),  // Baissé de 20 à 10
+      total: Math.min(rawTotal, 10),  // Limité si hors zone configurée
       details,
       priority: "BASSE",
       color: "#dc2626",  // ROUGE
@@ -220,15 +225,26 @@ function scoreBudget(client: Partial<Client>): number {
 function scoreZone(client: Partial<Client>): number {
   const zipCode = client.zipCode || "";
 
-  // ZONES CIBLES UNIQUEMENT : 13, 30, 83, 84
-  if (zipCode.startsWith("13")) return 10;
-  if (zipCode.startsWith("83")) return 9;
-  if (zipCode.startsWith("84")) return 9;
-  if (zipCode.startsWith("30")) return 8;
+  // ZONES CIBLES depuis ALLOWED_DEPARTMENTS (env ou Setting)
+  // Par défaut (vide), score 10 pour toute zone France
+  const allowedDepts = (process.env.ALLOWED_DEPARTMENTS || "")
+    .split(",")
+    .map(d => d.trim())
+    .filter(d => d);
 
-  // Toutes les autres zones (dont 06)
-  if (zipCode) return 5;
-  return 3;
+  if (allowedDepts.length === 0) {
+    // Pas de restriction - toute la France = 10pts
+    return zipCode ? 10 : 3;
+  }
+
+  // Scoring par priorité dans les zones configurées
+  if (zipCode.startsWith(allowedDepts[0])) return 10;
+  if (allowedDepts.length > 1 && zipCode.startsWith(allowedDepts[1])) return 9;
+  if (allowedDepts.length > 2 && zipCode.startsWith(allowedDepts[2])) return 8;
+  if (allowedDepts.length > 3 && zipCode.startsWith(allowedDepts[3])) return 7;
+
+  // Hors zone configurée
+  return 5;
 }
 
 /**

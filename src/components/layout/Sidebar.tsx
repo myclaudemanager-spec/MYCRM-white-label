@@ -70,8 +70,8 @@ export default function Sidebar({ userName, userRole, mobileOpen, onMobileClose,
       <div className="flex items-center justify-between px-4 h-16 border-b border-white/10">
         {!collapsed && (
           <div className="min-w-0">
-            <h1 className="text-lg font-bold tracking-tight">MyCRM</h1>
-            <p className="text-[10px] text-white/50 -mt-1">Energie Solaire France</p>
+            <h1 className="text-lg font-bold tracking-tight">{process.env.NEXT_PUBLIC_BUSINESS_NAME || "MyCRM"}</h1>
+            <p className="text-[10px] text-white/50 -mt-1">{process.env.NEXT_PUBLIC_BUSINESS_TAGLINE || "CRM"}</p>
           </div>
         )}
         {/* Desktop collapse toggle */}

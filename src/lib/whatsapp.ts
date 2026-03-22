@@ -8,7 +8,7 @@
  * - Notifications à M (propriétaire) via Twilio
  */
 
-const WHATSAPP_BUSINESS_NUMBER = "33744303516"; // +33 7 44 30 35 16
+const WHATSAPP_BUSINESS_NUMBER = process.env.WHATSAPP_BUSINESS_NUMBER || "";
 const WHATSAPP_API_VERSION = "v22.0";
 const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN || "";
@@ -18,10 +18,15 @@ export interface WhatsAppRecipient {
   number: string;
 }
 
-export const WHATSAPP_RECIPIENTS: WhatsAppRecipient[] = [
-  { name: "M (Israel)", number: "+972548358765" },
-  { name: "M (France)", number: "+33778818211" },
-];
+// WHATSAPP_RECIPIENTS configuré via env: WHATSAPP_NOTIF_RECIPIENTS="name1:+33612345678,name2:+972548358765"
+export function getWhatsAppRecipients(): WhatsAppRecipient[] {
+  const envVal = process.env.WHATSAPP_NOTIF_RECIPIENTS;
+  if (!envVal) return [];
+  return envVal.split(",").map(entry => {
+    const [name, number] = entry.split(":");
+    return { name: name.trim(), number: number.trim() };
+  });
+}
 
 // ===== HELPERS =====
 
@@ -220,6 +225,7 @@ export async function sendWhatsAppNotificationToM(lead: LeadNotification): Promi
   const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
   const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
   const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || "whatsapp:+14155238886";
+  const CRM_BASE_URL = process.env.CRM_BASE_URL || "https://mycrm.solar";
 
   if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
     console.log("[WhatsApp M] ⚠️  Twilio non configuré - notifications WhatsApp désactivées");
@@ -245,11 +251,11 @@ export async function sendWhatsAppNotificationToM(lead: LeadNotification): Promi
 📊 Score: ${lead.score}/100 pts
 📋 Source: ${lead.source}
 
-🔗 Voir: https://mycrm.solar/clients?openClient=${lead.clientId}`;
+🔗 Voir: ${CRM_BASE_URL}/clients?openClient=${lead.clientId}`;
 
   let successCount = 0;
 
-  for (const recipient of WHATSAPP_RECIPIENTS) {
+  for (const recipient of getWhatsAppRecipients()) {
     try {
       const response = await fetch(
         `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
@@ -281,13 +287,6 @@ export async function sendWhatsAppNotificationToM(lead: LeadNotification): Promi
   }
 
   return successCount > 0;
-}
-
-/**
- * Obtenir les numéros configurés
- */
-export function getWhatsAppRecipients(): WhatsAppRecipient[] {
-  return WHATSAPP_RECIPIENTS;
 }
 
 export { WHATSAPP_BUSINESS_NUMBER };
