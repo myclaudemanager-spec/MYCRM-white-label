@@ -10,9 +10,9 @@ import { FacebookAdsService } from "@/lib/facebook-ads";
  * en utilisant le champ "campaign" pour matcher avec les noms de campagnes Facebook
  *
  * Exemple:
- * - Client avec campaign = "devis-solaire-paca.fr"
+ * - Client avec campaign = "mondomaine.com"
  * - Campagne Facebook "Leads PV 2026 - PACA"
- * → Match si le nom contient "paca" ou "devis-solaire"
+ * → Match si le nom contient "paca" ou "leads"
  */
 
 export async function POST(request: NextRequest) {
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
 
 /**
  * Extraire les mots-clés d'un champ campaign
- * Ex: "devis-solaire-paca.fr" → ["devis", "solaire", "paca"]
+ * Ex: "mondomaine.com" → ["mondomaine"]
  */
 function extractKeywords(campaign: string): string[] {
   return campaign
