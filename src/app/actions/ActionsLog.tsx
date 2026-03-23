@@ -25,12 +25,38 @@ const ACTION_ICONS: Record<string, React.ReactNode> = {
   ajout_commentaire: <MessageSquare size={14} className="text-cyan-500" />,
 };
 
+interface ActionUser {
+  id: number;
+  name: string;
+}
+
+interface ActionClient {
+  id: number;
+  firstName: string | null;
+  lastName: string | null;
+}
+
+interface Action {
+  id: number;
+  type: string;
+  detail: string;
+  createdAt: string;
+  user?: ActionUser | null;
+  client?: ActionClient | null;
+  [key: string]: unknown;
+}
+
+interface ActionUserOption {
+  id: number;
+  name: string;
+}
+
 export default function ActionsLog() {
-  const [actions, setActions] = useState<any[]>([]);
+  const [actions, setActions] = useState<Action[]>([]);
   const [loading, setLoading] = useState(true);
   const [clientSearch, setClientSearch] = useState("");
   const [actionType, setActionType] = useState("");
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<ActionUserOption[]>([]);
   const [userFilter, setUserFilter] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -86,8 +112,8 @@ export default function ActionsLog() {
   const sortedActions = [...actions].sort((a, b) => {
     if (!sortField) return 0;
 
-    let aVal: any = a[sortField as keyof typeof a];
-    let bVal: any = b[sortField as keyof typeof b];
+    let aVal: string | number | null = a[sortField as keyof typeof a] as string | number | null;
+    let bVal: string | number | null = b[sortField as keyof typeof b] as string | number | null;
 
     // Handle nested fields (user.name, client.firstName)
     if (sortField === "user") {
@@ -135,7 +161,7 @@ export default function ActionsLog() {
             className="flex-1 sm:flex-none px-3 py-2 bg-card border border-border rounded-lg text-sm"
           >
             <option value="">Tous les utilisateurs</option>
-            {users.map((u: any) => (
+            {users.map((u) => (
               <option key={u.id} value={u.id}>{u.name}</option>
             ))}
           </select>
@@ -248,7 +274,7 @@ export default function ActionsLog() {
                 <td colSpan={7} className="py-16 text-center text-muted">Aucune action</td>
               </tr>
             ) : (
-              sortedActions.map((action: any) => (
+              sortedActions.map((action) => (
                 <tr key={action.id} className="border-b border-border/50 hover:bg-bg/50 transition-colors">
                   <td className="py-2.5 px-4 text-xs text-muted whitespace-nowrap">
                     {formatDateTime(action.createdAt)}

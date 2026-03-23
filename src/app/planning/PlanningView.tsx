@@ -65,17 +65,42 @@ interface PlanningViewProps {
   userId?: number;
 }
 
+interface PlanningStatus {
+  id: number;
+  type: string;
+  name: string;
+  color: string;
+  [key: string]: unknown;
+}
+
+interface PlanningClient {
+  id: number;
+  firstName?: string | null;
+  lastName?: string | null;
+  mobile?: string | null;
+  phone1?: string | null;
+  city?: string | null;
+  rdvTime?: string | null;
+  rdvDate?: string | null;
+  rdvDuration?: number | null;
+  statusCall?: string | null;
+  statusRDV?: string | null;
+  rappelDate?: string | null;
+  rappelTime?: string | null;
+  [key: string]: unknown;
+}
+
 export default function PlanningView({ userRole = "admin", userId }: PlanningViewProps) {
   const [viewMode, setViewMode] = useState<"day" | "week" | "month">("week");
   const [weekStart, setWeekStart] = useState<Date>(() => getMonday(new Date()));
-  const [days, setDays] = useState<Record<string, any[]>>({});
+  const [days, setDays] = useState<Record<string, PlanningClient[]>>({});
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [statuses, setStatuses] = useState<any[]>([]);
+  const [statuses, setStatuses] = useState<PlanningStatus[]>([]);
   const [statusCallFilter, setStatusCallFilter] = useState("");
   const [statusRDVFilter, setStatusRDVFilter] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
-  const [popoverClient, setPopoverClient] = useState<any | null>(null);
+  const [popoverClient, setPopoverClient] = useState<PlanningClient | null>(null);
   const [popoverPosition, setPopoverPosition] = useState<{ top: number; left: number } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [pxPerMin, setPxPerMin] = useState(DEFAULT_PX);
@@ -253,7 +278,7 @@ export default function PlanningView({ userRole = "admin", userId }: PlanningVie
               <select value={statusCallFilter} onChange={(e) => setStatusCallFilter(e.target.value)}
                 className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                 <option value="">Tous</option>
-                {statut1List.map((s: any) => <option key={s.id} value={s.name}>{s.name}</option>)}
+                {statut1List.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
               </select>
             </div>
             <div>
@@ -261,7 +286,7 @@ export default function PlanningView({ userRole = "admin", userId }: PlanningVie
               <select value={statusRDVFilter} onChange={(e) => setStatusRDVFilter(e.target.value)}
                 className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
                 <option value="">Tous</option>
-                {statut2List.map((s: any) => <option key={s.id} value={s.name}>{s.name}</option>)}
+                {statut2List.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
               </select>
             </div>
             <button onClick={() => { setStatusCallFilter(""); setStatusRDVFilter(""); }}
@@ -342,17 +367,17 @@ export default function PlanningView({ userRole = "admin", userId }: PlanningVie
 
                     {/* Events */}
                     {!loading && (() => {
-                      const withTime = dayClients.filter((c: any) => c.rdvTime);
-                      const sorted = [...withTime].sort((a: any, b: any) => timeToMinutes(a.rdvTime) - timeToMinutes(b.rdvTime));
-                      const columns: any[][] = [];
+                      const withTime = dayClients.filter((c) => c.rdvTime);
+                      const sorted = [...withTime].sort((a, b) => timeToMinutes(a.rdvTime) - timeToMinutes(b.rdvTime));
+                      const columns: PlanningClient[][] = [];
                       for (const client of sorted) {
                         const mins = timeToMinutes(client.rdvTime);
-                        const dur = parseInt(client.rdvDuration) || 60;
+                        const dur = parseInt(String(client.rdvDuration)) || 60;
                         let placed = false;
                         for (const col of columns) {
-                          const hasOverlap = col.some((c: any) => {
+                          const hasOverlap = col.some((c) => {
                             const cStart = timeToMinutes(c.rdvTime);
-                            const cDur = parseInt(c.rdvDuration) || 60;
+                            const cDur = parseInt(String(c.rdvDuration)) || 60;
                             return mins < cStart + cDur && cStart < mins + dur;
                           });
                           if (!hasOverlap) { col.push(client); placed = true; break; }
@@ -363,7 +388,7 @@ export default function PlanningView({ userRole = "admin", userId }: PlanningVie
                       const clientColIndex = new Map<number, number>();
                       columns.forEach((col, ci) => col.forEach(c => clientColIndex.set(c.id, ci)));
 
-                      return withTime.map((client: any) => {
+                      return withTime.map((client) => {
                         const duration = parseInt(client.rdvDuration) || 60;
                         const { top, height } = getEventPosition(client.rdvTime, duration, pxPerMin);
                         const color = getStatusColor(client.statusCall || "");

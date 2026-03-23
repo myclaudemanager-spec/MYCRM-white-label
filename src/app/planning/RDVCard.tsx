@@ -4,10 +4,31 @@ import { useState, useRef, useEffect } from "react";
 import { Phone, MapPin, User, Clock, ChevronDown, ChevronUp, MessageSquare, FileText, X, ExternalLink } from "lucide-react";
 import clsx from "clsx";
 
+interface RDVStatus {
+  id: number;
+  name: string;
+  color: string;
+  [key: string]: unknown;
+}
+
+interface RDVClient {
+  id: number;
+  firstName?: string | null;
+  lastName?: string | null;
+  mobile?: string | null;
+  phone1?: string | null;
+  city?: string | null;
+  rdvTime?: string | null;
+  rdvDate?: string | null;
+  statusCall?: string | null;
+  statusRDV?: string | null;
+  [key: string]: unknown;
+}
+
 interface RDVCardProps {
-  client: any;
+  client: RDVClient;
   compact: boolean;
-  statuses: any[];
+  statuses: RDVStatus[];
   onStatusChanged?: () => void;
   onOpenClient?: (clientId: number) => void;
 }
@@ -344,7 +365,7 @@ function StatusDropdown({
   onSelect,
   onClose,
 }: {
-  statuses: any[];
+  statuses: RDVStatus[];
   current: string;
   onSelect: (e: React.MouseEvent, status: string) => void;
   onClose: () => void;

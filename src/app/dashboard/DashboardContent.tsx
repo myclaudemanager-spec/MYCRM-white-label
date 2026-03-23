@@ -30,9 +30,74 @@ interface DashboardContentProps {
   userRole: string;
 }
 
+interface DashboardStats {
+  totalClients: number;
+  clientsChange?: string;
+  rdvThisWeek: number;
+  rdvConfirmedThisWeek: number;
+  signaturesThisMonth: number;
+  signatureChange?: string;
+  conversionRate: number;
+  revenue?: number;
+}
+
+interface PipelineStage {
+  label: string;
+  count: number;
+  color: string;
+  textColor: string;
+  bgLight: string;
+  width: string;
+}
+
+interface QuickActions {
+  new: number;
+  aRappeler: number;
+  rdvToday: number;
+  aConfirmer: number;
+  nrp: number;
+}
+
+interface RDVItem {
+  id: number;
+  rdvTime: string | null;
+  lastName: string;
+  firstName: string;
+  city: string | null;
+  statusCall: string;
+}
+
+interface StatusChartItem {
+  name: string;
+  count: number;
+}
+
+interface Activity {
+  time: string;
+  user: string;
+  action: string;
+  target: string;
+  clientId: number | null;
+  detail: string;
+  type: string;
+}
+
+interface Performer {
+  name: string;
+  count: number;
+}
+
 export default function DashboardContent({ userRole }: DashboardContentProps) {
   const router = useRouter();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<{
+    stats: DashboardStats;
+    pipeline: PipelineStage[];
+    quickActions: QuickActions;
+    rdvTodayList: RDVItem[];
+    statusChart: StatusChartItem[];
+    performers: Performer[];
+    activities: Activity[];
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
 
@@ -82,7 +147,7 @@ export default function DashboardContent({ userRole }: DashboardContentProps) {
   };
 
   // Status chart max for bar sizing
-  const maxStatusCount = Math.max(...statusChart.map((s: any) => s.count), 1);
+  const maxStatusCount = Math.max(...statusChart.map((s) => s.count), 1);
 
   // Status color map
   const STATUS_COLORS: Record<string, string> = {
@@ -185,7 +250,7 @@ export default function DashboardContent({ userRole }: DashboardContentProps) {
             <span className="text-xs text-muted">{stats.totalClients} total</span>
           </div>
           <div className="space-y-2.5">
-            {pipeline.map((stage: any) => (
+            {pipeline.map((stage) => (
               <div key={stage.label} className="flex items-center gap-3">
                 <span className="text-xs text-muted w-24 shrink-0 text-right">{stage.label}</span>
                 <div className="flex-1 bg-bg rounded-full h-7 overflow-hidden relative">
@@ -251,7 +316,7 @@ export default function DashboardContent({ userRole }: DashboardContentProps) {
             <p className="text-sm text-muted py-6 text-center">Aucun RDV aujourd'hui</p>
           ) : (
             <div className="space-y-2 max-h-56 overflow-y-auto">
-              {rdvTodayList.map((rdv: any) => (
+              {rdvTodayList.map((rdv) => (
                 <div
                   key={rdv.id}
                   onClick={() => setSelectedClientId(rdv.id)}
@@ -283,7 +348,7 @@ export default function DashboardContent({ userRole }: DashboardContentProps) {
             Répartition statuts
           </h3>
           <div className="space-y-2 max-h-56 overflow-y-auto">
-            {statusChart.slice(0, 8).map((s: any) => (
+            {statusChart.slice(0, 8).map((s) => (
               <div key={s.name} className="flex items-center gap-2.5">
                 <span
                   className="w-2.5 h-2.5 rounded-full shrink-0"
@@ -317,7 +382,7 @@ export default function DashboardContent({ userRole }: DashboardContentProps) {
             <p className="text-sm text-muted py-6 text-center">Aucune donnée</p>
           ) : (
             <div className="space-y-2.5">
-              {performers.map((p: any, i: number) => (
+              {performers.map((p, i) => (
                 <div key={p.name} className="flex items-center gap-3">
                   <span className={clsx(
                     "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
@@ -349,7 +414,7 @@ export default function DashboardContent({ userRole }: DashboardContentProps) {
           </button>
         </div>
         <div className="space-y-1">
-          {activities.length > 0 ? activities.map((activity: any, i: number) => (
+          {activities.length > 0 ? activities.map((activity, i) => (
             <div
               key={i}
               className={clsx(

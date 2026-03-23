@@ -52,7 +52,12 @@ export default function ReglagesView({ userRole }: { userRole: string }) {
 
 // ============ STATUTS TAB ============
 function StatutsTab({ isAdmin }: { isAdmin: boolean }) {
-  const [statuses, setStatuses] = useState<any[]>([]);
+  interface StatusItem {
+    id: number;
+    name: string;
+    color: string;
+  }
+  const [statuses, setStatuses] = useState<StatusItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [newStatus, setNewStatus] = useState({ name: "", type: "statut1", color: "#3b82f6" });
@@ -87,7 +92,7 @@ function StatutsTab({ isAdmin }: { isAdmin: boolean }) {
     fetchStatuses();
   };
 
-  const startEdit = (s: any) => {
+  const startEdit = (s: StatusItem) => {
     setEditId(s.id);
     setEditData({ name: s.name, color: s.color });
   };
@@ -106,7 +111,7 @@ function StatutsTab({ isAdmin }: { isAdmin: boolean }) {
   const statut1 = statuses.filter((s) => s.type === "statut1");
   const statut2 = statuses.filter((s) => s.type === "statut2");
 
-  const renderStatusList = (list: any[], title: string) => (
+  const renderStatusList = (list: StatusItem[], title: string) => (
     <div className="bg-card rounded-xl border border-border p-5">
       <h4 className="text-sm font-semibold mb-3">{title} — {list.length} statuts</h4>
       {loading ? (
@@ -216,8 +221,15 @@ function StatutsTab({ isAdmin }: { isAdmin: boolean }) {
 }
 
 // ============ CAMPAGNES TAB ============
+interface Campaign {
+  id: number;
+  name: string;
+  active: boolean;
+  [key: string]: unknown;
+}
+
 function CampagnesTab({ isAdmin }: { isAdmin: boolean }) {
-  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [newName, setNewName] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
@@ -244,7 +256,7 @@ function CampagnesTab({ isAdmin }: { isAdmin: boolean }) {
     fetchCampaigns();
   };
 
-  const toggleActive = async (c: any) => {
+  const toggleActive = async (c: Campaign) => {
     await fetch(`/api/campaigns/${c.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -789,8 +801,21 @@ function RelanceWorkflowPanel({ isAdmin, settings, onToggle, saving }: {
   onToggle: (key: string) => void;
   saving: string | null;
 }) {
+  interface PreviewClient {
+    id: number;
+    firstName: string;
+    lastName: string;
+    mobile: string | null;
+    updatedAt: string;
+    [key: string]: unknown;
+  }
+  interface RelancePreview {
+    counts: { nrp: number; faux: number; pi: number; total: number };
+    params: { nrpDelayH: number; fauxDelayH: number; piDelayD: number };
+    preview: { nrp: PreviewClient[]; faux: PreviewClient[]; pi: PreviewClient[] };
+  }
   const enabled = settings["auto_relance_nrp"] === "true";
-  const [preview, setPreview] = useState<any>(null);
+  const [preview, setPreview] = useState<RelancePreview | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
   const [showPreviewTable, setShowPreviewTable] = useState(false);
 
@@ -946,9 +971,9 @@ function RelanceWorkflowPanel({ isAdmin, settings, onToggle, saving }: {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...preview.preview.nrp.map((c: any) => ({ ...c, statut: "NRP" })),
-                       ...preview.preview.faux.map((c: any) => ({ ...c, statut: "FAUX NUM" })),
-                       ...preview.preview.pi.map((c: any) => ({ ...c, statut: "PAS INTERESSE" })),
+                    {[...preview.preview.nrp.map((c) => ({ ...c, statut: "NRP" })),
+                       ...preview.preview.faux.map((c) => ({ ...c, statut: "FAUX NUM" })),
+                       ...preview.preview.pi.map((c) => ({ ...c, statut: "PAS INTERESSE" })),
                     ].map((c) => (
                       <tr key={c.id} className="border-b border-border last:border-0 hover:bg-bg/50">
                         <td className="px-3 py-2 font-medium">{c.firstName} {c.lastName}</td>

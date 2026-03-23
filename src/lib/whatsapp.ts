@@ -121,8 +121,8 @@ export async function sendWhatsAppText(to: string, body: string): Promise<boolea
       console.error(`[WhatsApp] ❌ Échec envoi texte à ${cleanedTo}:`, error);
       return false;
     }
-  } catch (error: any) {
-    console.error("[WhatsApp] ❌ Erreur envoi texte:", error.message);
+  } catch (error: unknown) {
+    console.error("[WhatsApp] ❌ Erreur envoi texte:", error instanceof Error ? error.message : error);
     return false;
   }
 }
@@ -130,11 +130,16 @@ export async function sendWhatsAppText(to: string, body: string): Promise<boolea
 /**
  * Envoyer un template WhatsApp (avec composants optionnels)
  */
+interface WhatsAppTemplateComponent {
+  type: string;
+  [key: string]: unknown;
+}
+
 export async function sendWhatsAppTemplate(
   to: string,
   templateName: string,
   languageCode: string = "fr",
-  components?: any[]
+  components?: WhatsAppTemplateComponent[]
 ): Promise<boolean> {
   if (!WHATSAPP_PHONE_NUMBER_ID || !WHATSAPP_ACCESS_TOKEN) {
     console.log("[WhatsApp] ⚠️  Cloud API non configurée");
@@ -144,7 +149,7 @@ export async function sendWhatsAppTemplate(
   const cleanedTo = cleanPhoneNumber(to);
 
   try {
-    const templatePayload: any = {
+    const templatePayload: WhatsAppTemplateComponent = {
       name: templateName,
       language: { code: languageCode },
     };
@@ -179,8 +184,8 @@ export async function sendWhatsAppTemplate(
       console.error(`[WhatsApp] ❌ Échec template "${templateName}" à ${cleanedTo}:`, error);
       return false;
     }
-  } catch (error: any) {
-    console.error("[WhatsApp] ❌ Erreur envoi template:", error.message);
+  } catch (error: unknown) {
+    console.error("[WhatsApp] ❌ Erreur envoi template:", error instanceof Error ? error.message : error);
     return false;
   }
 }
@@ -282,8 +287,8 @@ export async function sendWhatsAppNotificationToM(lead: LeadNotification): Promi
         const error = await response.text();
         console.error(`[WhatsApp M] ❌ Échec ${recipient.name}:`, error);
       }
-    } catch (error: any) {
-      console.error(`[WhatsApp M] ❌ Erreur ${recipient.name}:`, error.message);
+    } catch (error: unknown) {
+      console.error(`[WhatsApp M] ❌ Erreur ${recipient.name}:`, error instanceof Error ? error.message : error);
     }
   }
 
