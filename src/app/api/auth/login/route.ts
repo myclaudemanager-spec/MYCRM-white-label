@@ -57,13 +57,16 @@ function clearFailedAttempts(ip: string): void {
 async function ensureAdminExists() {
   const userCount = await prisma.user.count();
   if (userCount === 0) {
-    console.log("[INIT] No users found, creating default admin user ELIEMALEK");
-    const hashedPassword = await hashPassword("admin123");
+    const adminLogin = process.env.ADMIN_LOGIN || "admin";
+    const adminPassword = process.env.ADMIN_PASSWORD || "changeme";
+    const adminName = process.env.ADMIN_NAME || "Administrateur";
+    console.log(`[INIT] No users found, creating admin user: ${adminLogin}`);
+    const hashedPassword = await hashPassword(adminPassword);
     await prisma.user.create({
       data: {
-        login: "ELIEMALEK",
-        name: "Elie Malek",
-        email: "eliemalek09@gmail.com",
+        login: adminLogin,
+        name: adminName,
+        email: `${adminLogin}@localhost`,
         password: hashedPassword,
         role: "admin",
         active: true,
@@ -81,7 +84,7 @@ async function ensureAdminExists() {
         }),
       },
     });
-    console.log("[INIT] Admin user ELIEMALEK created successfully");
+    console.log(`[INIT] Admin user ${adminLogin} created successfully`);
   }
 }
 
@@ -121,16 +124,18 @@ export async function POST(request: NextRequest) {
     });
 
     // If user not found, try to find/reset admin account
-    if (!user && login === "ELIEMALEK") {
+    const adminLogin = process.env.ADMIN_LOGIN || "admin";
+    if (!user && login === adminLogin) {
       console.warn(`[LOGIN] Admin user not found, attempting to create/reset...`);
-      const hashedPassword = await hashPassword("admin123");
+      const adminPassword = process.env.ADMIN_PASSWORD || "changeme";
+      const hashedPassword = await hashPassword(adminPassword);
       user = await prisma.user.upsert({
-        where: { login: "ELIEMALEK" },
+        where: { login: adminLogin },
         update: { password: hashedPassword, active: true },
         create: {
-          login: "ELIEMALEK",
-          name: "Elie Malek",
-          email: "eliemalek09@gmail.com",
+          login: adminLogin,
+          name: process.env.ADMIN_NAME || "Administrateur",
+          email: `${adminLogin}@localhost`,
           password: hashedPassword,
           role: "admin",
           active: true,
@@ -148,7 +153,7 @@ export async function POST(request: NextRequest) {
           }),
         },
       });
-      console.log(`[LOGIN] Admin user ELIEMALEK created/reset successfully`);
+      console.log(`[LOGIN] Admin user ${adminLogin} created/reset successfully`);
     }
 
     if (!user) {

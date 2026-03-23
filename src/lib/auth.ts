@@ -3,7 +3,12 @@ import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import prisma from "./prisma";
 
-const JWT_SECRET = process.env.JWT_SECRET || "mycrm-secret";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// Fail fast au démarrage si JWT_SECRET n'est pas configuré en production
+if (!JWT_SECRET && process.env.NODE_ENV === "production") {
+  throw new Error("[AUTH] JWT_SECRET is required in production. Set it in your .env file.");
+}
 
 export interface JWTPayload {
   userId: number;

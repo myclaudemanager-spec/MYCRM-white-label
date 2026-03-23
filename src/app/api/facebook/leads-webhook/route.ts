@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { leadIngestionService, LeadSource } from "@/lib/lead-ingestion-service";
 import prisma from "@/lib/prisma";
 
-const VERIFY_TOKEN = "bhcompany_webhook_secret_2026";
+const VERIFY_TOKEN = process.env.FB_WEBHOOK_VERIFY_TOKEN;
 /**
  * Normaliser la valeur isOwner du formulaire Facebook
  * Support du nouveau formulaire avec emojis (oui__✅, non_❌)
