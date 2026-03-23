@@ -1,4 +1,4 @@
-# Historique des Changements - CRM BH Company
+# Historique des Changements - CRM Mon CRM
 
 > Journal complet de toutes les modifications majeures du projet
 
@@ -367,7 +367,7 @@ Permettre aux administrateurs de surveiller les campagnes Facebook en temps rée
 - Intégrité vérifiée : ✅ OK
 
 #### Configuration Facebook Pixel 🎯
-- **ID Pixel** : `1557240932171719` (CRM BH Company API)
+- **ID Pixel** : `1557240932171719` (CRM Mon CRM API)
 - **Actions** :
   - Mise à jour `.env` avec le Pixel ID
   - Rebuild Next.js pour prendre en compte la variable

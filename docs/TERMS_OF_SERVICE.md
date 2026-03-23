@@ -1,14 +1,14 @@
-# Conditions d'Utilisation - CRM BH Company
+# Conditions d'Utilisation - CRM Mon CRM
 
 **Dernière mise à jour : 13 février 2026**
 
 ## 1. Acceptation des Conditions
 
-En accédant et en utilisant l'Application CRM BH Company ("l'Application"), vous acceptez d'être lié par ces Conditions d'Utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser l'Application.
+En accédant et en utilisant l'Application CRM Mon CRM ("l'Application"), vous acceptez d'être lié par ces Conditions d'Utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser l'Application.
 
 ## 2. Description du Service
 
-CRM BH Company est une application de gestion de la relation client (CRM) intégrant des fonctionnalités de gestion de campagnes publicitaires Facebook Ads.
+CRM Mon CRM est une application de gestion de la relation client (CRM) intégrant des fonctionnalités de gestion de campagnes publicitaires Facebook Ads.
 
 **Fonctionnalités principales :**
 - Gestion des prospects et clients
@@ -79,9 +79,9 @@ Vous êtes seul responsable :
 
 ## 6. Propriété Intellectuelle
 
-### 6.1 Droits de BH Company
+### 6.1 Droits de Mon CRM
 
-L'Application et tout son contenu (code, design, logos, textes) sont la propriété exclusive de BH Company et sont protégés par les lois sur la propriété intellectuelle.
+L'Application et tout son contenu (code, design, logos, textes) sont la propriété exclusive de Mon CRM et sont protégés par les lois sur la propriété intellectuelle.
 
 ### 6.2 Vos Données
 
@@ -108,7 +108,7 @@ L'utilisation de l'Application peut être soumise à des frais d'abonnement. Les
 
 ### 8.2 Frais Facebook
 
-Les dépenses publicitaires Facebook sont facturées directement par Facebook. BH Company n'est pas responsable de ces frais.
+Les dépenses publicitaires Facebook sont facturées directement par Facebook. Mon CRM n'est pas responsable de ces frais.
 
 ## 9. Disponibilité du Service
 
@@ -131,7 +131,7 @@ L'Application est fournie "EN L'ÉTAT" sans garantie d'aucune sorte.
 
 ### 10.2 Exclusion de Responsabilité
 
-BH Company ne peut être tenu responsable de :
+Mon CRM ne peut être tenu responsable de :
 - Pertes de données ou de profits
 - Interruptions d'activité
 - Performances des campagnes Facebook
@@ -183,7 +183,7 @@ Ces Conditions d'Utilisation sont régies par les lois françaises. Tout litige 
 
 ### 14.1 Intégralité de l'Accord
 
-Ces Conditions d'Utilisation constituent l'intégralité de l'accord entre vous et BH Company concernant l'Application.
+Ces Conditions d'Utilisation constituent l'intégralité de l'accord entre vous et Mon CRM concernant l'Application.
 
 ### 14.2 Divisibilité
 
@@ -197,11 +197,11 @@ Le fait de ne pas exercer un droit ne constitue pas une renonciation à ce droit
 
 Pour toute question concernant ces Conditions d'Utilisation :
 
-**BH Company**
+**Mon CRM**
 Email : contact@bhcompany.com
 Téléphone : [Votre numéro]
 Adresse : [Votre adresse]
 
 ---
 
-**En utilisant l'Application CRM BH Company, vous acceptez ces Conditions d'Utilisation.**
+**En utilisant l'Application CRM Mon CRM, vous acceptez ces Conditions d'Utilisation.**

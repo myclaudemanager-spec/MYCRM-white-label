@@ -1,10 +1,10 @@
-# Politique de Confidentialité - CRM BH Company
+# Politique de Confidentialité - CRM Mon CRM
 
 **Dernière mise à jour : 13 février 2026**
 
 ## 1. Introduction
 
-BH Company ("nous", "notre", "nos") exploite l'application CRM BH Company (ci-après dénommée "l'Application").
+Mon CRM ("nous", "notre", "nos") exploite l'application CRM Mon CRM (ci-après dénommée "l'Application").
 
 Cette page vous informe de nos politiques en matière de collecte, d'utilisation et de divulgation des données personnelles lorsque vous utilisez notre Application et les choix que vous avez associés à ces données.
 
@@ -28,7 +28,7 @@ Nous collectons plusieurs types de données différents à des fins diverses pou
 
 ### 2.2 Utilisation des Données
 
-BH Company utilise les données collectées à des fins suivantes :
+Mon CRM utilise les données collectées à des fins suivantes :
 - Gestion de la relation client (CRM)
 - Gestion et optimisation des campagnes publicitaires Facebook
 - Analyse des performances marketing
@@ -118,7 +118,7 @@ Nous pouvons mettre à jour notre politique de confidentialité périodiquement.
 
 Pour toute question concernant cette politique de confidentialité, contactez-nous :
 
-**BH Company**
+**Mon CRM**
 Email : contact@bhcompany.com
 Téléphone : [Votre numéro]
 Adresse : [Votre adresse]
@@ -127,4 +127,4 @@ Adresse : [Votre adresse]
 
 **Consentement**
 
-En utilisant l'Application CRM BH Company, vous consentez à notre politique de confidentialité et acceptez ses conditions.
+En utilisant l'Application CRM Mon CRM, vous consentez à notre politique de confidentialité et acceptez ses conditions.

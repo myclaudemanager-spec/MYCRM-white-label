@@ -1,4 +1,4 @@
-# CRM BH Company 🌞
+# CRM Mon CRM 🌞
 
 **CRM professionnel pour la gestion commerciale et le suivi clients - Spécialisé panneaux photovoltaïques**
 
@@ -20,7 +20,7 @@
 
 ## 🎯 Vue d'ensemble
 
-CRM BH Company est une application web complète pour gérer :
+CRM Mon CRM est une application web complète pour gérer :
 - **Clients** : Fiches détaillées, historique des interactions
 - **Planning** : Gestion des RDV commerciaux
 - **Téléprospection** : Panel d'appel intégré avec timer
@@ -526,4 +526,4 @@ Pour toute question ou problème :
 
 ## 📄 Licence
 
-© 2026 BH Company - Tous droits réservés
+© 2026 Mon CRM - Tous droits réservés
