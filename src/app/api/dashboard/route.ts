@@ -3,7 +3,11 @@ import prisma from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 
 // In-memory cache 2 min
-let dashboardCache: { data: any; ts: number } | null = null;
+interface DashboardCache {
+  data: Record<string, unknown>;
+  ts: number;
+}
+let dashboardCache: DashboardCache | null = null;
 const CACHE_TTL = 2 * 60 * 1000;
 
 export async function GET() {

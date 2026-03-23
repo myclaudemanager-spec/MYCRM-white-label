@@ -24,20 +24,19 @@ export async function POST(request: NextRequest) {
 
     // Limiter les champs modifiables en bulk
     const ALLOWED_BULK_FIELDS = ["statusCall", "statusRDV", "isOwner", "campaign", "team", "teleposId"];
-    const cleanUpdates: Record<string, string> = {};
+    const cleanUpdates: Record<string, string | number | boolean> = {};
     for (const key of Object.keys(updates)) {
       if (ALLOWED_BULK_FIELDS.includes(key) && updates[key] !== undefined && updates[key] !== "") {
-        cleanUpdates[key] = updates[key];
+        if (key === "teleposId") {
+          cleanUpdates[key] = parseInt(updates[key]);
+        } else {
+          cleanUpdates[key] = updates[key];
+        }
       }
     }
 
     if (Object.keys(cleanUpdates).length === 0) {
       return NextResponse.json({ error: "Aucun champ valide à modifier" }, { status: 400 });
-    }
-
-    // teleposId doit etre un int
-    if (cleanUpdates.teleposId) {
-      (cleanUpdates as any).teleposId = parseInt(cleanUpdates.teleposId);
     }
 
     // Normaliser isOwner (sécurité : convertit toute valeur legacy vers Oui/Non)
