@@ -54,7 +54,7 @@ export interface RawLeadData {
 
   // Metadata par source
   sourceId?: string;  // fbLeadId, landingToken, etc.
-  sourceMetadata?: Record<string, any>;  // JSON libre
+  sourceMetadata?: Record<string, unknown>;  // JSON libre
 
   // Facebook specific
   fbLeadId?: string;
@@ -68,12 +68,26 @@ export interface RawLeadData {
   fbLeadCreatedTime?: Date;
 
   // Autres champs
-  [key: string]: any;
+  [key: string]: unknown;
+}
+
+export interface IngestionClientResult {
+  id: number;
+  clientNumber: number | null;
+  firstName: string | null;
+  lastName: string | null;
+  mobile: string | null;
+  email: string | null;
+  city: string | null;
+  zipCode: string | null;
+  statusCall: string | null;
+  leadScore: number | null;
+  [key: string]: unknown;
 }
 
 export interface IngestionResult {
   success: boolean;
-  client?: any;
+  client?: IngestionClientResult;
   status: ValidationStatus;
   error?: string;
   processingTime: number;  // ms
@@ -178,7 +192,14 @@ export class LeadIngestionService {
         if (shouldReinscrit) {
           try {
             // Ajouter une entrée dans callHistory
-            let history: any[] = [];
+            interface CallHistoryEntry {
+              date: string;
+              user: string;
+              action: string;
+              detail: string;
+              newValue: string;
+            }
+            let history: CallHistoryEntry[] = [];
             try { history = JSON.parse(duplicate.callHistory || '[]'); } catch {}
             history.push({
               date: new Date().toISOString(),
@@ -489,7 +510,7 @@ export class LeadIngestionService {
         processingTime: Date.now() - startTime,
       };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[LeadIngestion] ❌ ERROR:', error);
 
       await this.logIngestion({
@@ -540,7 +561,7 @@ export class LeadIngestionService {
   /**
    * Enrichir les données (géolocalisation, etc.)
    */
-  private async enrich(data: RawLeadData): Promise<any> {
+  private async enrich(data: RawLeadData): Promise<RawLeadData> {
     // Enrichir city depuis zipCode
     if (data.zipCode && !data.city) {
       data.city = this.getCityFromZipCode(data.zipCode);
@@ -552,7 +573,7 @@ export class LeadIngestionService {
   /**
    * Stocker dans la base de données
    */
-  private async store(data: any): Promise<any> {
+  private async store(data: RawLeadData): Promise<IngestionClientResult> {
     // Auto-assign sequential clientNumber
     const maxNumResult = await prisma.client.aggregate({ _max: { clientNumber: true } });
     const nextClientNumber = (maxNumResult._max.clientNumber ?? 0) + 1;
@@ -607,7 +628,16 @@ export class LeadIngestionService {
   /**
    * Logger tentative d'ingestion
    */
-  private async logIngestion(log: any): Promise<void> {
+  interface IngestionLogEntry {
+    source: string;
+    status: string;
+    clientId?: number;
+    error?: string;
+    processingTime: number;
+    rawData?: Record<string, unknown>;
+  }
+
+  private async logIngestion(log: IngestionLogEntry): Promise<void> {
     try {
       await prisma.leadIngestionLog.create({
         data: {

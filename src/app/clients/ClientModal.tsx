@@ -19,6 +19,50 @@ interface ClientModalProps {
   userRole: string;
 }
 
+interface StatusOption {
+  id: number;
+  type: string;
+  name: string;
+  color: string;
+}
+
+interface UserOption {
+  id: number;
+  name: string;
+  role: string;
+}
+
+interface CallLogEntry {
+  id: number;
+  result: string;
+  comment: string | null;
+  createdAt: string;
+  callTime: string;
+}
+
+interface FormData {
+  [key: string]: unknown;
+  firstName?: string;
+  lastName?: string;
+  mobile?: string;
+  phone1?: string;
+  statusCall?: string;
+  statusRDV?: string;
+  leadScore?: number;
+  frozen?: boolean;
+}
+
+interface FieldProps {
+  label: string;
+  field: string;
+  type?: string;
+  options?: { value: string; label: string }[];
+  placeholder?: string;
+  span?: number;
+  form: FormData;
+  updateField: (field: string, value: unknown) => void;
+}
+
 const TABS = [
   { id: "profil", label: "Profil", icon: User },
   { id: "qualification", label: "Qualif.", icon: Star },
@@ -28,17 +72,17 @@ const TABS = [
 
 const HEATING_OPTIONS = ["Électrique", "Gaz", "Fioul", "Pompe à chaleur", "Bois", "Autre"];
 
-const Field = ({ label, field, type = "text", options, placeholder, span = 1, form, updateField }: any) => (
+const Field = ({ label, field, type = "text", options, placeholder, span = 1, form, updateField }: FieldProps) => (
   <div className={clsx(span === 2 && "col-span-full")}>
     <label className="text-xs font-medium text-muted block mb-1">{label}</label>
     {type === "select" ? (
-      <select value={form[field] || ""} onChange={(e) => updateField(field, e.target.value)}
+      <select value={(form[field] as string) || ""} onChange={(e) => updateField(field, e.target.value)}
         className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
         <option value="">—</option>
-        {options?.map((opt: any) => <option key={opt.value || opt} value={opt.value || opt}>{opt.label || opt}</option>)}
+        {options?.map((opt) => <option key={opt.value || opt} value={opt.value || opt}>{opt.label || opt}</option>)}
       </select>
     ) : type === "textarea" ? (
-      <textarea value={form[field] || ""} onChange={(e) => updateField(field, e.target.value)} placeholder={placeholder} rows={3}
+      <textarea value={(form[field] as string) || ""} onChange={(e) => updateField(field, e.target.value)} placeholder={placeholder} rows={3}
         className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-y" />
     ) : type === "checkbox" ? (
       <div className="flex items-center gap-2 mt-2">
@@ -46,7 +90,7 @@ const Field = ({ label, field, type = "text", options, placeholder, span = 1, fo
         <span className="text-sm text-secondary">{form[field] ? "Oui" : "Non"}</span>
       </div>
     ) : (
-      <input type={type} value={form[field] || ""} onChange={(e) => updateField(field, e.target.value)} placeholder={placeholder}
+      <input type={type} value={(form[field] as string) || ""} onChange={(e) => updateField(field, e.target.value)} placeholder={placeholder}
         className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
     )}
   </div>
@@ -75,7 +119,7 @@ const HeatingMultiSelect = ({ value, onChange }: { value: string; onChange: (v: 
   );
 };
 
-function calcScore(form: any): { score: number; label: string; color: string } {
+function calcScore(form: FormData): { score: number; label: string; color: string } {
   let s = 0;
   const isProprio = form.isOwner === "Oui";
   if (isProprio) s += 50;
@@ -90,7 +134,7 @@ function calcScore(form: any): { score: number; label: string; color: string } {
   return { score: s, label, color };
 }
 
-const StatusBadge = ({ status, statuses, type }: { status: string; statuses: any[]; type: string }) => {
+const StatusBadge = ({ status, statuses, type }: { status: string; statuses: StatusOption[]; type: string }) => {
   if (!status) return null;
   const s = statuses.find(x => x.name === status && x.type === type);
   return <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: s?.color || "#94a3b8" }}>{status}</span>;
@@ -100,11 +144,11 @@ export default function ClientModal({ clientId, onClose, onSaved, userRole }: Cl
   const [activeTab, setActiveTab] = useState("profil");
   const [loading, setLoading] = useState(!!clientId);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState<any>({});
-  const [statuses, setStatuses] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
+  const [form, setForm] = useState<FormData>({});
+  const [statuses, setStatuses] = useState<StatusOption[]>([]);
+  const [users, setUsers] = useState<UserOption[]>([]);
   const [showCallPanel, setShowCallPanel] = useState(false);
-  const [callHistory, setCallHistory] = useState<any[]>([]);
+  const [callHistory, setCallHistory] = useState<CallLogEntry[]>([]);
   const [showHZConfirm, setShowHZConfirm] = useState(false);
 
   useEffect(() => {
@@ -128,7 +172,7 @@ export default function ClientModal({ clientId, onClose, onSaved, userRole }: Cl
     }
   }, [activeTab, clientId]);
 
-  const updateField = (field: string, value: any) => setForm((p: any) => ({ ...p, [field]: value }));
+  const updateField = (field: string, value: unknown) => setForm((p: FormData) => ({ ...p, [field]: value }));
 
   const handleStatusCall = (v: string) => {
     if (v === "HORS ZONE") { setShowHZConfirm(true); return; }
@@ -183,11 +227,11 @@ export default function ClientModal({ clientId, onClose, onSaved, userRole }: Cl
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ frozen: newFrozen }),
     });
-    if (res.ok) { setForm((p: any) => ({ ...p, frozen: newFrozen })); onSaved(); }
+    if (res.ok) { setForm((p: FormData) => ({ ...p, frozen: newFrozen })); onSaved(); }
   };
 
-  const statut1List = statuses.filter((s: any) => s.type === "statut1");
-  const statut2List = statuses.filter((s: any) => s.type === "statut2");
+  const statut1List = statuses.filter((s) => s.type === "statut1");
+  const statut2List = statuses.filter((s) => s.type === "statut2");
   const isManager = userRole === "admin" || userRole === "manager";
   const rtScore = calcScore(form);
 
@@ -266,7 +310,7 @@ export default function ClientModal({ clientId, onClose, onSaved, userRole }: Cl
                         <select value={form.statusCall || ""} onChange={(e) => handleStatusCall(e.target.value)}
                           className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
                           <option value="">—</option>
-                          {statut1List.map((s: any) => <option key={s.id} value={s.name}>{s.name}</option>)}
+                          {statut1List.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
                           <option value="HORS ZONE">🚫 HORS ZONE</option>
                         </select>
                         {form.statusCall === "HORS ZONE" && (
@@ -278,7 +322,7 @@ export default function ClientModal({ clientId, onClose, onSaved, userRole }: Cl
                         <select value={form.statusRDV || ""} onChange={(e) => updateField("statusRDV", e.target.value)}
                           className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
                           <option value="">—</option>
-                          {statut2List.map((s: any) => <option key={s.id} value={s.name}>{s.name}</option>)}
+                          {statut2List.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
                         </select>
                       </div>
                       <Field form={form} updateField={updateField} label="Civilité" field="civilite" type="select" options={["M.", "Mme", "M. et Mme"]} />
@@ -297,11 +341,11 @@ export default function ClientModal({ clientId, onClose, onSaved, userRole }: Cl
                       <h3 className="text-sm font-semibold text-secondary mb-3 flex items-center gap-2"><Home size={13} /> Équipe & Source</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <Field form={form} updateField={updateField} label="Commercial 1" field="commercial1Id" type="select"
-                          options={users.filter((u: any) => u.role === "commercial").map((u: any) => ({ value: u.id.toString(), label: u.name }))} />
+                          options={users.filter((u) => u.role === "commercial").map((u) => ({ value: u.id.toString(), label: u.name }))} />
                         <Field form={form} updateField={updateField} label="Commercial 2" field="commercial2Id" type="select"
-                          options={users.filter((u: any) => u.role === "commercial").map((u: any) => ({ value: u.id.toString(), label: u.name }))} />
+                          options={users.filter((u) => u.role === "commercial").map((u) => ({ value: u.id.toString(), label: u.name }))} />
                         <Field form={form} updateField={updateField} label="Télépos" field="teleposId" type="select"
-                          options={users.filter((u: any) => u.role === "telepos").map((u: any) => ({ value: u.id.toString(), label: u.name }))} />
+                          options={users.filter((u) => u.role === "telepos").map((u) => ({ value: u.id.toString(), label: u.name }))} />
                         <Field form={form} updateField={updateField} label="Campagne" field="campaign" placeholder="Campagne" />
                       </div>
                     </div>
@@ -473,7 +517,7 @@ export default function ClientModal({ clientId, onClose, onSaved, userRole }: Cl
                           <p className="text-sm text-muted italic py-4 text-center">Aucun appel enregistré</p>
                         ) : (
                           <div className="space-y-2">
-                            {callHistory.map((call: any) => (
+                            {callHistory.map((call) => (
                               <div key={call.id} className="border border-border rounded-lg p-3 hover:bg-bg/50">
                                 <div className="flex items-start justify-between gap-2 mb-1">
                                   <span className={clsx("text-xs font-semibold px-2 py-0.5 rounded-full",

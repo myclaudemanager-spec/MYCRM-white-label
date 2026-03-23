@@ -15,12 +15,24 @@ import prisma from './prisma';
 import { decryptClient } from './encryption';
 import { sendWhatsAppNotificationToM } from './whatsapp';
 
+export interface ClientInfo {
+  id: number;
+  firstName?: string | null;
+  lastName?: string | null;
+  mobile?: string | null;
+  email?: string | null;
+  city?: string | null;
+  zipCode?: string | null;
+  leadScore?: number | null;
+  [key: string]: unknown;
+}
+
 export interface NotificationEvent {
   event: 'new_lead' | 'rdv_pris' | 'signature' | 'installation' | 'reconversion';
-  client: any;
+  client: ClientInfo;
   priority: string;  // "TRÈS HAUTE", "HAUTE", "MOYENNE", "BASSE"
   source: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export class NotificationManager {
@@ -154,7 +166,7 @@ export class NotificationManager {
   /**
    * 📊 Extraire informations de campagne/plateforme
    */
-  private getCampaignInfo(client: any, source: string): {
+  private getCampaignInfo(client: ClientInfo, source: string): {
     platform: string;
     platformShort: string; // Pour le titre (ex: "FACEBOOK")
     campaignName: string;
@@ -207,7 +219,7 @@ export class NotificationManager {
   /**
    * ⏰ Formater timestamp en français (Timezone Israel)
    */
-  private getFormattedTimestamp(client: any): string {
+  private getFormattedTimestamp(client: ClientInfo): string {
     // Priorité : fbLeadCreatedTime (Facebook) > ingestedAt > createdAt
     const date = client.fbLeadCreatedTime || client.ingestedAt || client.createdAt;
 
@@ -227,7 +239,7 @@ export class NotificationManager {
   /**
    * Format message Telegram reconversion (doublon = contact qui revient)
    */
-  formatReconversionMessage(existingClient: any, newLeadData: any, source: string): string {
+  formatReconversionMessage(existingClient: ClientInfo, newLeadData: Partial<ClientInfo> | undefined, source: string): string {
     const decrypted = decryptClient(existingClient) || existingClient;
     const mobile = decrypted.mobile || decrypted.phone1;
     let whatsappLink = '';
