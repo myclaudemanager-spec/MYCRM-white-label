@@ -10,10 +10,31 @@ export const viewport: Viewport = {
   themeColor: "#1d4ed8",
 };
 
-export const metadata: Metadata = {
-  title: `MyCRM - ${process.env.NEXT_PUBLIC_BUSINESS_NAME || "CRM"}`,
-  description: `CRM de gestion commerciale - ${process.env.NEXT_PUBLIC_BUSINESS_NAME || "CRM"}`,
-};
+export function generateMetadata(): Metadata {
+  const businessName = process.env.NEXT_PUBLIC_BUSINESS_NAME || "CRM";
+  const baseUrl = process.env.CRM_BASE_URL || "https://mycrm.solar";
+
+  return {
+    title: `MyCRM - ${businessName}`,
+    description: `CRM de gestion commerciale - ${businessName}`,
+    alternates: {
+      canonical: baseUrl,
+    },
+    openGraph: {
+      title: `MyCRM - ${businessName}`,
+      description: `CRM de gestion commerciale - ${businessName}`,
+      url: baseUrl,
+      siteName: businessName,
+      locale: "fr_FR",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: `MyCRM - ${businessName}`,
+      description: `CRM de gestion commerciale - ${businessName}`,
+    },
+  };
+}
 
 export default function RootLayout({
   children,
