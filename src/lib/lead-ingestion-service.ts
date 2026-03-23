@@ -93,6 +93,15 @@ export interface IngestionResult {
   processingTime: number;  // ms
 }
 
+export interface IngestionLogEntry {
+  source: string;
+  status: string;
+  clientId?: number;
+  error?: string;
+  processingTime: number;
+  rawData?: Record<string, unknown>;
+}
+
 // ===== SERVICE =====
 
 export class LeadIngestionService {
@@ -623,18 +632,6 @@ export class LeadIngestionService {
         pixelLeadSent: true,
       }
     });
-  }
-
-  /**
-   * Logger tentative d'ingestion
-   */
-  interface IngestionLogEntry {
-    source: string;
-    status: string;
-    clientId?: number;
-    error?: string;
-    processingTime: number;
-    rawData?: Record<string, unknown>;
   }
 
   private async logIngestion(log: IngestionLogEntry): Promise<void> {
